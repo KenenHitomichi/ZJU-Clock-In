@@ -8,6 +8,7 @@ import re
 import datetime
 import time
 import sys
+from apscheduler.schedulers.blocking import BlockingScheduler
 
 
 class DaKa(object):
@@ -161,7 +162,8 @@ def main(username, password):
         print('获取信息失败，请手动打卡，更多信息: ' + str(err))
         raise Exception
 
-    print(text='正在为您打卡打卡打卡')
+
+    print('正在为您打卡打卡打卡')
     try:
         res = dk.post()
         if str(res['e']) == '0':
@@ -175,9 +177,11 @@ def main(username, password):
 
 if __name__ == "__main__":
     print(sys.argv)
+    scheduler = BlockingScheduler();    
     username = sys.argv[1]
     password = sys.argv[2]
     try:
-        main(username, password)
+        scheduler.add_job(main, 'cron', hour = 10, minute = 46, args = [username, password]);
+        scheduler.start();
     except Exception:
         exit(1)
